@@ -47,6 +47,7 @@ public class PaisController : BaseControllerApi
         paisDto.Id = pais.Id;
         return CreatedAtAction(nameof(Post), new { id = paisDto.Id }, paisDto);
     }
+    
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -54,7 +55,8 @@ public class PaisController : BaseControllerApi
     public async Task<ActionResult<PaisDto>> Get(int id)
     {
         var pais = await _unitOfWork.Paises.GetByIdAsync(id);
-        if (pais == null){
+        if (pais == null)
+        {
             return NotFound();
         }
         return _mapper.Map<PaisDto>(pais);

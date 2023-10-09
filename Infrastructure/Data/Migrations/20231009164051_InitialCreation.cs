@@ -7,12 +7,31 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Cliente",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nombre = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Apellidos = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cliente", x => x.Id);
+                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -62,6 +81,28 @@ namespace Infrastructure.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ClienteTelefono",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    IdCliente = table.Column<int>(type: "int", nullable: false),
+                    Numero = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClienteTelefono", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClienteTelefono_Cliente_IdCliente",
+                        column: x => x.IdCliente,
+                        principalTable: "Cliente",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Departamento",
                 columns: table => new
                 {
@@ -78,6 +119,38 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_Departamento_Pais_IdPais",
                         column: x => x.IdPais,
                         principalTable: "Pais",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Mascota",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nombre = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Especie = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    IdRaza = table.Column<int>(type: "int", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "datetime", nullable: false),
+                    IdCliente = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Mascota", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Mascota_Cliente_IdCliente",
+                        column: x => x.IdCliente,
+                        principalTable: "Cliente",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Mascota_Raza_IdRaza",
+                        column: x => x.IdRaza,
+                        principalTable: "Raza",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -106,27 +179,38 @@ namespace Infrastructure.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Cliente",
+                name: "Cita",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Apellidos = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CiudadId = table.Column<int>(type: "int", nullable: true)
+                    Fecha = table.Column<DateTime>(type: "date", nullable: false),
+                    Hora = table.Column<TimeSpan>(type: "time", nullable: false),
+                    IdCliente = table.Column<int>(type: "int", nullable: false),
+                    IdMascota = table.Column<int>(type: "int", nullable: false),
+                    ServicioId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Cliente", x => x.Id);
+                    table.PrimaryKey("PK_Cita", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cliente_Ciudad_CiudadId",
-                        column: x => x.CiudadId,
-                        principalTable: "Ciudad",
-                        principalColumn: "Id");
+                        name: "FK_Cita_Cliente_IdCliente",
+                        column: x => x.IdCliente,
+                        principalTable: "Cliente",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cita_Mascota_IdMascota",
+                        column: x => x.IdMascota,
+                        principalTable: "Mascota",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cita_Servicio_ServicioId",
+                        column: x => x.ServicioId,
+                        principalTable: "Servicio",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -178,96 +262,6 @@ namespace Infrastructure.Data.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.CreateTable(
-                name: "ClienteTelefono",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    IdCliente = table.Column<int>(type: "int", nullable: false),
-                    Numero = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClienteTelefono", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ClienteTelefono_Cliente_IdCliente",
-                        column: x => x.IdCliente,
-                        principalTable: "Cliente",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Mascota",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nombre = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Especie = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    IdRaza = table.Column<int>(type: "int", nullable: false),
-                    FechaNacimiento = table.Column<DateTime>(type: "datetime", nullable: false),
-                    IdCliente = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Mascota", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Mascota_Cliente_IdCliente",
-                        column: x => x.IdCliente,
-                        principalTable: "Cliente",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Mascota_Raza_IdRaza",
-                        column: x => x.IdRaza,
-                        principalTable: "Raza",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Cita",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Fecha = table.Column<DateTime>(type: "date", nullable: false),
-                    Hora = table.Column<TimeSpan>(type: "time", nullable: false),
-                    IdCliente = table.Column<int>(type: "int", nullable: false),
-                    IdMascota = table.Column<int>(type: "int", nullable: false),
-                    ServicioId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cita", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Cita_Cliente_IdCliente",
-                        column: x => x.IdCliente,
-                        principalTable: "Cliente",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Cita_Mascota_IdMascota",
-                        column: x => x.IdMascota,
-                        principalTable: "Mascota",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Cita_Servicio_ServicioId",
-                        column: x => x.ServicioId,
-                        principalTable: "Servicio",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
             migrationBuilder.CreateIndex(
                 name: "IX_Cita_IdCliente",
                 table: "Cita",
@@ -287,11 +281,6 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_Ciudad_IdDep",
                 table: "Ciudad",
                 column: "IdDep");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cliente_CiudadId",
-                table: "Cliente",
-                column: "CiudadId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClienteDireccion_IdCiudad",
@@ -345,13 +334,13 @@ namespace Infrastructure.Data.Migrations
                 name: "Servicio");
 
             migrationBuilder.DropTable(
+                name: "Ciudad");
+
+            migrationBuilder.DropTable(
                 name: "Cliente");
 
             migrationBuilder.DropTable(
                 name: "Raza");
-
-            migrationBuilder.DropTable(
-                name: "Ciudad");
 
             migrationBuilder.DropTable(
                 name: "Departamento");
