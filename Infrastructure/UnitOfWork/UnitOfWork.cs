@@ -12,6 +12,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly AnimalsContext _context;
     private PaisRepository _paises;
+    private CitaRepository _citas;
     private CiudadRepository _ciudades;
     private DepartamentoRepository _departamentos;
     private ClienteRepository _clientes;
@@ -126,6 +127,18 @@ public class UnitOfWork : IUnitOfWork, IDisposable
                 _clientesdir = new ClienteDirRepository(_context);
             }
             return _clientesdir;
+        }
+    }
+
+    public ICitaRepository Citas
+    {
+        get
+        {
+            if (_citas == null)
+            {
+                _citas = new CitaRepository(_context);
+            }
+            return _citas;
         }
     }
 

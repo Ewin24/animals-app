@@ -10,6 +10,7 @@ namespace Core.Interfaces
         IPaisRepository Paises { get; }
         ICiudadRepository Ciudades { get; }
         IClienteRepository Clientes { get; }
+        ICitaRepository Citas { get; }
         IDepartamentoRepository Departamentos { get; }
         IMascotaRepository Mascotas { get; }
         IRazaRepository Razas { get; }

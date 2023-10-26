@@ -9,9 +9,7 @@ namespace Core.Entities;
 public class ClienteDireccion : BaseEntity
 {
     public string TipoDeVia { get; set; }
-
     public int NumeroPri { get; set; }
-
     public string Letra { get; set; }
     public string Bis { get; set; }
     public string LetraSec { get; set; }
