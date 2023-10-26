@@ -23,6 +23,6 @@ namespace Core.Entities
         public Mascota Mascotas { get; set; }
         [Required]
         public int ServicioId { get; set; }
-        public Servicio Servicios { get; set; }        
+        public Servicio Servicios { get; set; }
     }
 }
